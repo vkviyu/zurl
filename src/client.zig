@@ -407,6 +407,6 @@ fn jsonValueToString(allocator: std.mem.Allocator, value: std.json.Value) ![]con
         .float => |f| try std.fmt.allocPrint(allocator, "{d}", .{f}),
         .bool => |b| if (b) "true" else "false",
         .null => "null",
-        else => try std.fmt.allocPrint(allocator, "{}", .{std.json.fmt(value, .{})}),
+        else => try std.fmt.allocPrint(allocator, "{any}", .{std.json.fmt(value, .{})}),
     };
 }

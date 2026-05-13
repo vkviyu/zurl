@@ -50,7 +50,7 @@ pub fn importFile(
 
     for (entries.items, 0..) |entry, idx| {
         const result = curl_parser.parse(allocator, entry.curl_line) catch |err| {
-            try writer.print("Warning: skipping entry {d}: {any}\n", .{ idx, err });
+            try writer.print("Warning: skipping entry {d}: {s}\n", .{ idx, @errorName(err) });
             continue;
         };
         parsed.append(allocator, .{
@@ -161,8 +161,9 @@ fn writeCollectionJson(
     const file = try std.fs.cwd().createFile(output_path, .{});
     defer file.close();
 
-    var bw = std.io.bufferedWriter(file.writer());
-    const w = bw.writer();
+    var write_buf: [4096]u8 = undefined;
+    var fw = file.writer(&write_buf);
+    const w = &fw.interface;
 
     try w.writeAll("{\n");
     try w.writeAll("  \"name\": \"");
@@ -177,8 +178,6 @@ fn writeCollectionJson(
 
     try w.writeAll("\n  ]\n");
     try w.writeAll("}\n");
-
-    try bw.flush();
 }
 
 fn writeRequestItem(allocator: std.mem.Allocator, w: anytype, req: ParsedRequest) !void {
