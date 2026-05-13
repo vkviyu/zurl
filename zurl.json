@@ -1,0 +1,21 @@
+{
+  "active": "test1",
+  "cache_limit": 10,
+  "envs": {
+    "test1": {
+      "vars": {
+        "host": "https://httpbin.org"
+      },
+      "cache": [
+        {
+          "method": "GET",
+          "url": "https://httpbin.org/get",
+          "headers": [],
+          "body": null
+        }
+      ],
+      "groups": {
+      }
+    }
+  }
+}

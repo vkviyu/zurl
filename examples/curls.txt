@@ -1,0 +1,11 @@
+# 用户登录
+curl -X POST 'https://httpbin.org/post' \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"admin","password":"123456"}'
+
+# 获取用户信息
+curl -H 'Authorization: Bearer token123' \
+  'https://httpbin.org/get'
+
+# 删除用户
+curl -X DELETE 'https://httpbin.org/delete'

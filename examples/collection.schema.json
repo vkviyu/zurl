@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "zurl Collection",
+  "description": "zurl 测试集合文件格式。通过 `load <file>` 命令加载，`run <name|index|all>` 执行。",
+  "type": "object",
+  "required": ["name", "requests"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "集合名称，加载时显示"
+    },
+    "requests": {
+      "type": "array",
+      "description": "请求列表，按顺序排列",
+      "items": {
+        "$ref": "#/definitions/RequestItem"
+      }
+    }
+  },
+  "definitions": {
+    "RequestItem": {
+      "type": "object",
+      "required": ["name", "request"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "请求名称，用于 `run <name>` 匹配和 `list` 显示"
+        },
+        "request": {
+          "$ref": "#/definitions/HttpRequest"
+        },
+        "capture": {
+          "type": "object",
+          "description": "从响应 JSON 中提取变量。key 为变量名，value 为 JSONPath 表达式。捕获的变量可在后续请求中通过 {{VAR}} 引用。",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^\\$\\..*",
+            "examples": ["$.token", "$.data.userId", "$.items[0].id"]
+          },
+          "examples": [
+            {
+              "TOKEN": "$.token",
+              "USER_ID": "$.userId"
+            }
+          ]
+        },
+        "sse": {
+          "$ref": "#/definitions/SseConfig"
+        }
+      }
+    },
+    "HttpRequest": {
+      "type": "object",
+      "required": ["method", "url"],
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
+          "description": "HTTP 方法（大小写不敏感）"
+        },
+        "url": {
+          "type": "string",
+          "description": "请求 URL。支持 {{VAR}} 环境变量插值和 {param} 路径参数插值。",
+          "examples": [
+            "https://api.example.com/users",
+            "{{BASE_URL}}/users/{userId}"
+          ]
+        },
+        "pathParams": {
+          "type": "object",
+          "description": "路径参数映射。URL 中的 {param} 占位符会被替换为对应的值。值支持 {{VAR}} 嵌套插值。",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "examples": [
+            {
+              "userId": "{{USER_ID}}"
+            }
+          ]
+        },
+        "headers": {
+          "type": "object",
+          "description": "请求头。key 为头名称，value 为头值（支持 {{VAR}} 插值）。Content-Type 决定 body 编码方式。",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "examples": [
+            {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{TOKEN}}"
+            }
+          ]
+        },
+        "body": {
+          "description": "请求体。可以是任意 JSON 值（对象、数组、字符串、数字等）。编码方式由 Content-Type 头决定：\n- application/json（默认）：序列化为 JSON 字符串原样发送\n- application/x-www-form-urlencoded：JSON 对象转为 key=value&key=value URL 编码\n- multipart/form-data：JSON 对象转为 multipart 表单，{\"file\": \"path\"} 语法标记文件上传",
+          "examples": [
+            {"username": "admin", "password": "123456"},
+            {"name": "test", "avatar": {"file": "./photos/avatar.png"}}
+          ]
+        }
+      }
+    },
+    "SseConfig": {
+      "type": "object",
+      "description": "Server-Sent Events 配置（已解析，执行层尚未完全接入）",
+      "properties": {
+        "timeout_ms": {
+          "type": "integer",
+          "default": 30000,
+          "description": "SSE 连接超时时间（毫秒）"
+        },
+        "stop_after": {
+          "type": "integer",
+          "description": "接收到指定数量的事件后自动停止"
+        },
+        "stop_on_event": {
+          "type": "string",
+          "description": "接收到指定事件类型时自动停止"
+        }
+      }
+    }
+  }
+}

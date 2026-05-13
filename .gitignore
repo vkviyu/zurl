@@ -1,0 +1,4 @@
+.comate
+.zig-cache
+.DS_STORE
+zig-out

@@ -1,0 +1,100 @@
+{
+  "name": "用户模块测试",
+  "requests": [
+    {
+      "name": "登录",
+      "request": {
+        "method": "POST",
+        "url": "{{BASE_URL}}/auth/login",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "username": "admin",
+          "password": "123456"
+        }
+      },
+      "capture": {
+        "TOKEN": "$.token",
+        "USER_ID": "$.userId"
+      }
+    },
+    {
+      "name": "获取用户详情",
+      "request": {
+        "method": "GET",
+        "url": "{{BASE_URL}}/users/{userId}",
+        "pathParams": {
+          "userId": "{{USER_ID}}"
+        },
+        "headers": {
+          "Authorization": "Bearer {{TOKEN}}"
+        }
+      }
+    },
+    {
+      "name": "表单登录",
+      "request": {
+        "method": "POST",
+        "url": "{{BASE_URL}}/auth/form-login",
+        "headers": {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": {
+          "username": "admin",
+          "password": "123456"
+        }
+      }
+    },
+    {
+      "name": "上传头像",
+      "request": {
+        "method": "POST",
+        "url": "{{BASE_URL}}/users/me/avatar",
+        "headers": {
+          "Content-Type": "multipart/form-data",
+          "Authorization": "Bearer {{TOKEN}}"
+        },
+        "body": {
+          "name": "{{USER_NAME}}",
+          "avatar": {
+            "file": "./fixtures/avatar.png"
+          }
+        }
+      }
+    },
+    {
+      "name": "创建订单",
+      "request": {
+        "method": "POST",
+        "url": "{{BASE_URL}}/orders",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {{TOKEN}}"
+        },
+        "body": {
+          "product_id": 101,
+          "quantity": 2
+        }
+      },
+      "capture": {
+        "ORDER_ID": "$.orderId"
+      }
+    },
+    {
+      "name": "监听订单事件",
+      "request": {
+        "method": "GET",
+        "url": "{{BASE_URL}}/orders/stream",
+        "headers": {
+          "Accept": "text/event-stream"
+        }
+      },
+      "sse": {
+        "timeout_ms": 30000,
+        "stop_after": 5,
+        "stop_on_event": "order.completed"
+      }
+    }
+  ]
+}

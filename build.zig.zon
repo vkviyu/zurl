@@ -1,0 +1,21 @@
+.{
+    .name = .zurl,
+    .version = "0.1.0",
+    .dependencies = .{
+        .curl = .{
+            .url = "https://github.com/jiacai2050/zig-curl/archive/refs/tags/v0.3.2.tar.gz",
+            .hash = "curl-0.3.2-P4tT4SXPAACuV6f5eyh4jG_1SspjWwMm_vRJfoKrQep5",
+        },
+        .linenoise = .{
+            .url = "https://github.com/joachimschmidt557/linenoize/archive/refs/heads/master.tar.gz",
+            .hash = "linenoize-0.1.1-J7HK8KrkAAAVfAihdPZzhwvDxDbwxqyhmbBy42IJznd8",
+        },
+    },
+    .fingerprint = 0x2ef10358d8140190,
+    .minimum_zig_version = "0.15.2",
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
